@@ -13,37 +13,37 @@
     #root { max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 40px; }
     button { font-family: Georgia, serif; cursor: pointer; }
     textarea, input { font-family: Georgia, serif; }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 4px; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState } = React;
+
+const BASE = "https://fletch1980.github.io";
 
 const CHAPTERS = [
-  { id: 1, title: "Prayer Is War", focus: "The Enemy" },
-  { id: 2, title: "Know Your Enemy", focus: "Spiritual Warfare" },
-  { id: 3, title: "Sealed with Prayer", focus: "Your Focus" },
-  { id: 4, title: "The Fervency Factor", focus: "Your Identity" },
-  { id: 5, title: "Winning the War Within", focus: "Your Family" },
-  { id: 6, title: "Making the Ask", focus: "Your Past" },
-  { id: 7, title: "The Grind", focus: "Your Fears" },
-  { id: 8, title: "A Passionate Appeal", focus: "Your Purity" },
-  { id: 9, title: "Your Calling", focus: "Your Purpose" },
-  { id: 10, title: "The Privilege of Prayer", focus: "Your Relationships" },
-  { id: 11, title: "Praying for Others", focus: "Others" },
-  { id: 12, title: "A Warrior's Manifesto", focus: "Your Faith" },
+  { id:1,  title:"Prayer Is War",           focus:"The Enemy" },
+  { id:2,  title:"Know Your Enemy",          focus:"Spiritual Warfare" },
+  { id:3,  title:"Sealed with Prayer",       focus:"Your Focus" },
+  { id:4,  title:"The Fervency Factor",      focus:"Your Identity" },
+  { id:5,  title:"Winning the War Within",   focus:"Your Family" },
+  { id:6,  title:"Making the Ask",           focus:"Your Past" },
+  { id:7,  title:"The Grind",                focus:"Your Fears" },
+  { id:8,  title:"A Passionate Appeal",      focus:"Your Purity" },
+  { id:9,  title:"Your Calling",             focus:"Your Purpose" },
+  { id:10, title:"The Privilege of Prayer",  focus:"Your Relationships" },
+  { id:11, title:"Praying for Others",       focus:"Others" },
+  { id:12, title:"A Warrior's Manifesto",    focus:"Your Faith" },
 ];
 
 const APPS = [
-  { id: "study", icon: "📖", label: "Study Guide", desc: "Chapter overviews, key points & challenges", file: "study.html" },
-  { id: "journal", icon: "✍️", label: "Reflection Journal", desc: "Guided prompts & dated entries", file: "journal.html" },
-  { id: "prayer", icon: "🙏", label: "Prayer Center", desc: "Chapter prayers & intercession list", file: "prayer.html" },
-  { id: "memory", icon: "📌", label: "Scripture Memory", desc: "Learn, cover, fill-in & quiz", file: "memory.html" },
-  { id: "discussion", icon: "💬", label: "Discussion Questions", desc: "Group questions & leader notes", file: "discussion.html" },
-  { id: "progress", icon: "📊", label: "Progress Tracker", desc: "Tasks, badges & chapter completion", file: "progress.html" },
+  { id:"study",      icon:"📖", label:"Study Guide",         desc:"Chapter overviews, key points & challenges",  url:`${BASE}/Fervent_study/` },
+  { id:"journal",    icon:"✍️", label:"Reflection Journal",  desc:"Guided prompts & dated entries",               url:`${BASE}/Fervent_journal/` },
+  { id:"prayer",     icon:"🙏", label:"Prayer Center",        desc:"Chapter prayers & intercession list",          url:`${BASE}/Fervent_prayer/` },
+  { id:"memory",     icon:"📌", label:"Scripture Memory",     desc:"Learn, cover, fill-in & quiz",                 url:`${BASE}/Fervent_memory/` },
+  { id:"discussion", icon:"💬", label:"Discussion Questions", desc:"Group questions & leader notes",               url:`${BASE}/Fervent_discussion/` },
+  { id:"progress",   icon:"📊", label:"Progress Tracker",     desc:"Tasks, badges & chapter completion",           url:`${BASE}/Fervent_progress/` },
 ];
 
 const COLORS = ["#7C3AED","#6D28D9","#8B5CF6","#9333EA","#7C3AED","#6D28D9","#8B5CF6","#9333EA","#7C3AED","#6D28D9","#8B5CF6","#9333EA"];
@@ -55,16 +55,16 @@ const loadProgress = () => {
     if (!r) return {};
     const d = JSON.parse(r);
     const p = {};
-    CHAPTERS.forEach(c => { p[c.id] = d[c.id] || { read:false, studied:false, journaled:false, prayed:false, memorized:false, discussed:false }; });
+    CHAPTERS.forEach(c => { p[c.id] = d[c.id] || { read:false,studied:false,journaled:false,prayed:false,memorized:false,discussed:false }; });
     return p;
   } catch { return {}; }
 };
 const persistHome = (d) => { try { localStorage.setItem("fervent-home-v1", JSON.stringify(d)); } catch {} };
 
-const addDays = (date, n) => { const d = new Date(date); d.setDate(d.getDate() + n); return d; };
-const fmtDate = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-const fmtFull = (d) => d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-const isSameDay = (a, b) => a.toDateString() === b.toDateString();
+const addDays = (date, n) => { const d = new Date(date); d.setDate(d.getDate()+n); return d; };
+const fmtDate = (d) => d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+const fmtFull = (d) => d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+const isSameDay = (a,b) => a.toDateString()===b.toDateString();
 
 function App() {
   const [home, setHome] = useState(loadHome);
@@ -75,34 +75,31 @@ function App() {
   const [startInput, setStartInput] = useState("");
 
   const updHome = (u) => { setHome(u); persistHome(u); };
-
   const startDate = home.startDate ? new Date(home.startDate) : null;
   const today = new Date(); today.setHours(0,0,0,0);
   const todayStr = today.toISOString().split("T")[0];
 
   const currentWeek = startDate
-    ? Math.min(12, Math.max(1, Math.floor((today - startDate) / (7*86400000)) + 1))
+    ? Math.min(12, Math.max(1, Math.floor((today-startDate)/(7*86400000))+1))
     : null;
 
-  const getWeekStart = (wk) => startDate ? addDays(startDate, (wk-1)*7) : null;
+  const getWeekStart = (wk) => startDate ? addDays(startDate,(wk-1)*7) : null;
   const getWeekMeeting = (wk) => {
-    const ws = getWeekStart(wk);
-    if (!ws) return null;
+    const ws = getWeekStart(wk); if (!ws) return null;
     let d = new Date(ws);
-    while (d.getDay() !== 3) d = addDays(d, 1);
+    while (d.getDay()!==3) d = addDays(d,1);
     return d;
   };
 
   const chPct = (chId) => {
-    const p = progress[chId];
-    if (!p) return 0;
-    return Math.round((Object.values(p).filter(Boolean).length / 6) * 100);
+    const p = progress[chId]; if (!p) return 0;
+    return Math.round((Object.values(p).filter(Boolean).length/6)*100);
   };
-  const totalPct = () => Math.round(CHAPTERS.reduce((s,c) => s + chPct(c.id), 0) / 12);
-  const chapsDone = CHAPTERS.filter(c => chPct(c.id) === 100).length;
+  const totalPct = () => Math.round(CHAPTERS.reduce((s,c)=>s+chPct(c.id),0)/12);
+  const chapsDone = CHAPTERS.filter(c=>chPct(c.id)===100).length;
 
   const TASK_LABELS = { read:"📖 Read", studied:"🔍 Study", prayed:"🙏 Pray", journaled:"✍️ Journal", memorized:"📌 Memorize", discussed:"💬 Discuss" };
-  const TASK_DAYS = { read:0, studied:1, prayed:2, journaled:3, memorized:4, discussed:6 };
+  const TASK_DAYS   = { read:0, studied:1, prayed:2, journaled:3, memorized:4, discussed:6 };
 
   return (
     <div>
@@ -142,7 +139,7 @@ function App() {
             <div style={{background:"linear-gradient(135deg,#6D28D9,#9333EA)",borderRadius:14,padding:18,color:"white",marginBottom:16,textAlign:"center"}}>
               <div style={{fontSize:24,marginBottom:6}}>🔥</div>
               <div style={{fontWeight:"bold",fontSize:16,marginBottom:4}}>Set Your Start Date</div>
-              <div style={{fontSize:12,opacity:0.85,marginBottom:14}}>Choose when your group begins Week 1. The calendar and weekly plan will build from there.</div>
+              <div style={{fontSize:12,opacity:0.85,marginBottom:14}}>Choose when your group begins Week 1.</div>
               <button onClick={()=>setShowStartPicker(true)} style={{background:"white",color:"#6D28D9",border:"none",borderRadius:10,padding:"10px 24px",fontSize:14,fontWeight:"bold"}}>Set Start Date</button>
             </div>
           )}
@@ -171,7 +168,7 @@ function App() {
           <div style={{fontWeight:"bold",color:"#6D28D9",marginBottom:10,fontSize:15}}>Your Study Apps</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
             {APPS.map(app=>(
-              <a key={app.id} href={app.file} style={{background:"white",borderRadius:12,padding:14,boxShadow:"0 1px 4px rgba(0,0,0,0.07)",border:"2px solid #f3eeff",textDecoration:"none",display:"block"}}>
+              <a key={app.id} href={app.url} style={{background:"white",borderRadius:12,padding:14,boxShadow:"0 1px 4px rgba(0,0,0,0.07)",border:"2px solid #f3eeff",textDecoration:"none",display:"block"}}>
                 <div style={{fontSize:26,marginBottom:6}}>{app.icon}</div>
                 <div style={{fontWeight:"bold",fontSize:13,color:"#1a1a1a",marginBottom:3}}>{app.label}</div>
                 <div style={{fontSize:11,color:"#888",lineHeight:1.4}}>{app.desc}</div>
@@ -186,7 +183,8 @@ function App() {
               {CHAPTERS.map((c,i)=>{
                 const wk=i+1, pct=chPct(c.id), isCur=wk===currentWeek, isPast=wk<(currentWeek||0);
                 return (
-                  <div key={c.id} onClick={()=>{setSelectedWeek(wk);setView("week");}} style={{flexShrink:0,width:64,background:isCur?"#6D28D9":"white",borderRadius:10,padding:8,textAlign:"center",cursor:"pointer",border:isCur?"none":isPast?"2px solid #a78bfa":"2px solid #e0d4ff"}}>
+                  <div key={c.id} onClick={()=>{setSelectedWeek(wk);setView("week");}}
+                    style={{flexShrink:0,width:64,background:isCur?"#6D28D9":"white",borderRadius:10,padding:8,textAlign:"center",cursor:"pointer",border:isCur?"none":isPast?"2px solid #a78bfa":"2px solid #e0d4ff"}}>
                     <div style={{fontSize:11,fontWeight:"bold",color:isCur?"white":"#6D28D9"}}>W{wk}</div>
                     <div style={{fontSize:9,color:isCur?"rgba(255,255,255,0.8)":"#999",marginTop:2,marginBottom:6}}>Ch.{c.id}</div>
                     <div style={{background:isCur?"rgba(255,255,255,0.25)":"#f3eeff",borderRadius:20,height:4,overflow:"hidden"}}>
@@ -220,7 +218,8 @@ function App() {
             const wk=i+1, meeting=getWeekMeeting(wk), ws=getWeekStart(wk), we=addDays(ws,6);
             const isCur=wk===currentWeek, isPast=wk<(currentWeek||0), pct=chPct(c.id);
             return (
-              <div key={c.id} onClick={()=>{setSelectedWeek(wk);setView("week");}} style={{background:"white",borderRadius:12,padding:14,marginBottom:8,cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,0.06)",border:isCur?"2px solid #6D28D9":isPast?"2px solid #e0d4ff":"2px solid transparent"}}>
+              <div key={c.id} onClick={()=>{setSelectedWeek(wk);setView("week");}}
+                style={{background:"white",borderRadius:12,padding:14,marginBottom:8,cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,0.06)",border:isCur?"2px solid #6D28D9":isPast?"2px solid #e0d4ff":"2px solid transparent"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12}}>
                   <div style={{background:isCur?"#6D28D9":COLORS[i],color:"white",borderRadius:8,width:38,height:38,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                     <div style={{fontSize:9,opacity:0.8}}>WK</div>
@@ -311,11 +310,11 @@ function App() {
                 })}
               </div>
 
-              {/* Quick links to apps */}
+              {/* Jump to apps */}
               <div style={{fontWeight:"bold",color:"#6D28D9",marginBottom:10}}>Jump to an App</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
                 {APPS.map(app=>(
-                  <a key={app.id} href={app.file} style={{background:"white",borderRadius:10,padding:"10px 12px",border:"2px solid #f3eeff",textDecoration:"none",display:"flex",alignItems:"center",gap:8}}>
+                  <a key={app.id} href={app.url} style={{background:"white",borderRadius:10,padding:"10px 12px",border:"2px solid #f3eeff",textDecoration:"none",display:"flex",alignItems:"center",gap:8}}>
                     <span style={{fontSize:20}}>{app.icon}</span>
                     <span style={{fontSize:12,color:"#6D28D9",fontWeight:"bold"}}>{app.label}</span>
                   </a>
